@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="WebGIS interaktif peta aksesibilitas fasilitas kesehatan darurat di Dharavi, Mumbai — rumah sakit, klinik, jalur ambulance, dan pos ambulance." />
+  <meta name="keywords" content="WebGIS, Dharavi, healthcare, emergency, ambulance, hospital, clinic, Leaflet, GIS" />
+  <meta property="og:title" content="Emergency Healthcare Accessibility — Dharavi WebGIS" />
+  <meta property="og:description" content="Peta interaktif fasilitas kesehatan darurat di Dharavi, Mumbai." />
+  <title>Emergency Healthcare Accessibility — Dharavi WebGIS</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <!-- Leaflet Fullscreen Plugin -->
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css" />
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════ LOADER ══════════════════ -->
+  <div id="loader" class="loader-overlay">
+    <div class="loader-content">
+      <div class="loader-pulse">
+        <i class="fa-solid fa-heart-pulse loader-icon"></i>
+      </div>
+      <p class="loader-text">Loading Healthcare Map…</p>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ HEADER ══════════════════ -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-left">
+      <div class="header-logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-heart-pulse"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-main">DharaviCare</span>
+          <span class="logo-sub">Emergency Healthcare GIS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="search-container" id="searchContainer">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search facilities, roads, locations…"
+          autocomplete="off"
+          aria-label="Search location"
+        />
+        <button class="search-clear" id="searchClear" aria-label="Clear search">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="search-dropdown" id="searchDropdown"></div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="header-stats-pill">
+        <span class="stats-pill-item" id="pillHospital">
+          <i class="fa-solid fa-hospital"></i>
+          <span id="countHospital">–</span> RS
+        </span>
+        <span class="divider"></span>
+        <span class="stats-pill-item" id="pillKlinik">
+          <i class="fa-solid fa-kit-medical"></i>
+          <span id="countKlinik">–</span> Klinik
+        </span>
+        <span class="divider"></span>
+        <span class="stats-pill-item" id="pillAmbulance">
+          <i class="fa-solid fa-truck-medical"></i>
+          <span id="countAmbulance">–</span> Pos
+        </span>
+      </div>
+      <button class="btn-sidebar-toggle" id="btnSidebarToggle" aria-label="Toggle sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══════════════════ MAIN WRAPPER ══════════════════ -->
+  <main class="main-wrapper" id="mainWrapper">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-inner">
+
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+          <h2 class="sidebar-title">
+            <i class="fa-solid fa-circle-info"></i> Dashboard
+          </h2>
+          <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+          <div class="stat-card stat-hospital animate__animated animate__fadeInUp" id="statCardHospital" style="--delay:0s">
+            <div class="stat-icon"><i class="fa-solid fa-hospital"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="statHospital">–</div>
+              <div class="stat-label">Rumah Sakit</div>
+            </div>
+            <div class="stat-ring"></div>
+          </div>
+          <div class="stat-card stat-clinic animate__animated animate__fadeInUp" id="statCardClinic" style="--delay:.1s">
+            <div class="stat-icon"><i class="fa-solid fa-kit-medical"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="statClinic">–</div>
+              <div class="stat-label">Klinik</div>
+            </div>
+            <div class="stat-ring"></div>
+          </div>
+          <div class="stat-card stat-route animate__animated animate__fadeInUp" id="statCardRoute" style="--delay:.2s">
+            <div class="stat-icon"><i class="fa-solid fa-route"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="statRoute">–</div>
+              <div class="stat-label">Jalur Ambulance</div>
+            </div>
+            <div class="stat-ring"></div>
+          </div>
+          <div class="stat-card stat-pos animate__animated animate__fadeInUp" id="statCardPos" style="--delay:.3s">
+            <div class="stat-icon"><i class="fa-solid fa-truck-medical"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="statPos">–</div>
+              <div class="stat-label">Pos Ambulance</div>
+            </div>
+            <div class="stat-ring"></div>
+          </div>
+        </div>
+
+        <!-- Layer Control -->
+        <div class="sidebar-section">
+          <h3 class="section-title"><i class="fa-solid fa-layer-group"></i> Layer Control</h3>
+          <div class="layer-list">
+            <label class="layer-toggle" id="toggleHospital">
+              <input type="checkbox" id="chkHospital" checked aria-label="Toggle Rumah Sakit" />
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+              <span class="toggle-dot" style="background:#20B2AA"></span>
+              <span class="toggle-label">Rumah Sakit</span>
+              <span class="toggle-badge" id="badgeHospital"></span>
+            </label>
+            <label class="layer-toggle" id="toggleClinic">
+              <input type="checkbox" id="chkClinic" checked aria-label="Toggle Klinik" />
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+              <span class="toggle-dot" style="background:#E91E8C"></span>
+              <span class="toggle-label">Klinik Kesehatan</span>
+              <span class="toggle-badge" id="badgeClinic"></span>
+            </label>
+            <label class="layer-toggle" id="toggleRoute">
+              <input type="checkbox" id="chkRoute" checked aria-label="Toggle Jalur Ambulance" />
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+              <span class="toggle-dot" style="background:#FFB300"></span>
+              <span class="toggle-label">Jalur Ambulance</span>
+              <span class="toggle-badge" id="badgeRoute"></span>
+            </label>
+            <label class="layer-toggle" id="togglePos">
+              <input type="checkbox" id="chkPos" checked aria-label="Toggle Pos Ambulance" />
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+              <span class="toggle-dot" style="background:#E53935"></span>
+              <span class="toggle-label">Pos Ambulance</span>
+              <span class="toggle-badge" id="badgePos"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Legend Section (in sidebar) -->
+        <div class="sidebar-section">
+          <h3 class="section-title"><i class="fa-solid fa-circle-dot"></i> Legenda</h3>
+          <div class="sidebar-legend">
+
+            <div class="sl-item">
+              <div class="sl-symbol sl-marker" style="background:linear-gradient(135deg,#20B2AA,#009688)">
+                <i class="fa-solid fa-hospital"></i>
+              </div>
+              <div class="sl-info">
+                <span class="sl-name">Rumah Sakit</span>
+                <span class="sl-desc">Fasilitas rawat inap &amp; darurat</span>
+              </div>
+              <span class="sl-dot" style="background:#20B2AA;box-shadow:0 0 8px #20B2AA55"></span>
+            </div>
+
+            <div class="sl-item">
+              <div class="sl-symbol sl-marker" style="background:linear-gradient(135deg,#E91E8C,#C2185B)">
+                <i class="fa-solid fa-kit-medical"></i>
+              </div>
+              <div class="sl-info">
+                <span class="sl-name">Klinik Kesehatan</span>
+                <span class="sl-desc">Pusat &amp; klinik rawat jalan</span>
+              </div>
+              <span class="sl-dot" style="background:#E91E8C;box-shadow:0 0 8px #E91E8C55"></span>
+            </div>
+
+            <div class="sl-item">
+              <div class="sl-symbol sl-line">
+                <span class="sl-line-solid" style="background:#FFB300"></span>
+                <span class="sl-line-dash" style="background:repeating-linear-gradient(90deg,#FFB300 0,#FFB300 6px,transparent 6px,transparent 10px)"></span>
+              </div>
+              <div class="sl-info">
+                <span class="sl-name">Jalur Ambulance</span>
+                <span class="sl-desc">Primer (solid) · Sekunder (dashed)</span>
+              </div>
+              <span class="sl-dot" style="background:#FFB300;box-shadow:0 0 8px #FFB30055"></span>
+            </div>
+
+            <div class="sl-item">
+              <div class="sl-symbol sl-marker" style="background:linear-gradient(135deg,#E53935,#B71C1C)">
+                <i class="fa-solid fa-truck-medical"></i>
+              </div>
+              <div class="sl-info">
+                <span class="sl-name">Pos Ambulance</span>
+                <span class="sl-desc">Titik siaga ambulance 24/7</span>
+              </div>
+              <span class="sl-dot" style="background:#E53935;box-shadow:0 0 8px #E5393555"></span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="sidebar-section">
+          <h3 class="section-title"><i class="fa-solid fa-map-location-dot"></i> Tentang Peta</h3>
+          <div class="about-card">
+            <p>Peta ini menampilkan aksesibilitas fasilitas kesehatan darurat di <strong>Dharavi, Mumbai</strong> — salah satu permukiman padat di dunia.</p>
+            <ul class="about-list">
+              <li><i class="fa-solid fa-database"></i> Sumber: OpenStreetMap / HOT OSM</li>
+              <li><i class="fa-solid fa-calendar"></i> Data: Mei 2026</li>
+              <li><i class="fa-solid fa-code"></i> Leaflet.js 1.9.4</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Map Controls -->
+        <div class="sidebar-section">
+          <h3 class="section-title"><i class="fa-solid fa-sliders"></i> Kontrol Peta</h3>
+          <div class="map-control-btns">
+            <button class="map-ctrl-btn" id="btnResetView" aria-label="Reset zoom">
+              <i class="fa-solid fa-arrows-to-circle"></i> Reset Zoom
+            </button>
+            <button class="map-ctrl-btn" id="btnFitBounds" aria-label="Fit all layers">
+              <i class="fa-solid fa-expand"></i> Fit Semua Layer
+            </button>
+            <button class="map-ctrl-btn" id="btnExportMap" aria-label="Export map view">
+              <i class="fa-solid fa-share-nodes"></i> Bagikan Lokasi
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ── MAP CONTAINER ── -->
+    <div class="map-container" id="mapContainer">
+      <div id="map" aria-label="Interactive WebGIS map of Dharavi healthcare facilities"></div>
+
+      <!-- Floating Controls -->
+      <div class="floating-controls" id="floatingControls">
+        <button class="fab" id="fabReset" title="Reset View" aria-label="Reset map view">
+          <i class="fa-solid fa-arrows-to-circle"></i>
+        </button>
+        <button class="fab" id="fabLocate" title="My Location" aria-label="Get my location">
+          <i class="fa-solid fa-location-crosshairs"></i>
+        </button>
+        <button class="fab" id="fabFullscreen" title="Fullscreen" aria-label="Toggle fullscreen">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+
+
+
+      <!-- Scale Bar hint overlay -->
+      <div class="map-attribution-bar">
+        <span><i class="fa-solid fa-copyright"></i> OpenStreetMap contributors</span>
+        <span>HOT OSM · Dharavi · 2026</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ══════════════════ SCRIPTS ══════════════════ -->
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <!-- Custom Script -->
+  <script src="script.js"></script>
+</body>
+</html>
