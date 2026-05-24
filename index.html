@@ -8,7 +8,6 @@
   <meta property="og:title" content="Emergency Healthcare Accessibility — Dharavi WebGIS" />
   <meta property="og:description" content="Peta interaktif fasilitas kesehatan darurat di Dharavi, Mumbai." />
   <title>Emergency Healthcare Accessibility — Dharavi WebGIS</title>
-
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <!-- Leaflet Fullscreen Plugin -->
@@ -21,12 +20,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <!-- ══════════════════ LOADER ══════════════════ -->
   <div id="loader" class="loader-overlay">
     <div class="loader-content">
@@ -37,7 +34,6 @@
       <div class="loader-bar"><div class="loader-bar-fill"></div></div>
     </div>
   </div>
-
   <!-- ══════════════════ HEADER ══════════════════ -->
   <header class="site-header" id="siteHeader">
     <div class="header-left">
@@ -51,7 +47,6 @@
         </div>
       </div>
     </div>
-
     <div class="header-center">
       <div class="search-container" id="searchContainer">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -69,7 +64,6 @@
         <div class="search-dropdown" id="searchDropdown"></div>
       </div>
     </div>
-
     <div class="header-right">
       <div class="header-stats-pill">
         <span class="stats-pill-item" id="pillHospital">
@@ -92,14 +86,11 @@
       </button>
     </div>
   </header>
-
   <!-- ══════════════════ MAIN WRAPPER ══════════════════ -->
   <main class="main-wrapper" id="mainWrapper">
-
     <!-- ── SIDEBAR ── -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-inner">
-
         <!-- Sidebar Header -->
         <div class="sidebar-header">
           <h2 class="sidebar-title">
@@ -109,7 +100,6 @@
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
-
         <!-- Stat Cards -->
         <div class="stat-grid">
           <div class="stat-card stat-hospital animate__animated animate__fadeInUp" id="statCardHospital" style="--delay:0s">
@@ -145,7 +135,6 @@
             <div class="stat-ring"></div>
           </div>
         </div>
-
         <!-- Layer Control -->
         <div class="sidebar-section">
           <h3 class="section-title"><i class="fa-solid fa-layer-group"></i> Layer Control</h3>
@@ -188,60 +177,11 @@
             </label>
           </div>
         </div>
-
-        <!-- Legend Section (in sidebar) -->
-        <div class="sidebar-section">
-          <h3 class="section-title"><i class="fa-solid fa-circle-dot"></i> Legenda</h3>
-          <div class="sidebar-legend">
-
-            <div class="sl-item">
-              <div class="sl-symbol sl-marker" style="background:linear-gradient(135deg,#20B2AA,#009688)">
-                <i class="fa-solid fa-hospital"></i>
-              </div>
-              <div class="sl-info">
-                <span class="sl-name">Rumah Sakit</span>
-                <span class="sl-desc">Fasilitas rawat inap &amp; darurat</span>
-              </div>
-              <span class="sl-dot" style="background:#20B2AA;box-shadow:0 0 8px #20B2AA55"></span>
-            </div>
-
-            <div class="sl-item">
-              <div class="sl-symbol sl-marker" style="background:linear-gradient(135deg,#E91E8C,#C2185B)">
-                <i class="fa-solid fa-kit-medical"></i>
-              </div>
-              <div class="sl-info">
-                <span class="sl-name">Klinik Kesehatan</span>
-                <span class="sl-desc">Pusat &amp; klinik rawat jalan</span>
-              </div>
-              <span class="sl-dot" style="background:#E91E8C;box-shadow:0 0 8px #E91E8C55"></span>
-            </div>
-
-            <div class="sl-item">
-              <div class="sl-symbol sl-line">
-                <span class="sl-line-solid" style="background:#FFB300"></span>
-                <span class="sl-line-dash" style="background:repeating-linear-gradient(90deg,#FFB300 0,#FFB300 6px,transparent 6px,transparent 10px)"></span>
-              </div>
-              <div class="sl-info">
-                <span class="sl-name">Jalur Ambulance</span>
-                <span class="sl-desc">Primer (solid) · Sekunder (dashed)</span>
-              </div>
-              <span class="sl-dot" style="background:#FFB300;box-shadow:0 0 8px #FFB30055"></span>
-            </div>
-
-            <div class="sl-item">
-              <div class="sl-symbol sl-marker" style="background:linear-gradient(135deg,#E53935,#B71C1C)">
-                <i class="fa-solid fa-truck-medical"></i>
-              </div>
-              <div class="sl-info">
-                <span class="sl-name">Pos Ambulance</span>
-                <span class="sl-desc">Titik siaga ambulance 24/7</span>
-              </div>
-              <span class="sl-dot" style="background:#E53935;box-shadow:0 0 8px #E5393555"></span>
-            </div>
-
-          </div>
+        <!-- Feature Info Panel -->
+        <div class="sidebar-section feature-info-section" id="featureInfoSection" style="display:none">
+          <h3 class="section-title"><i class="fa-solid fa-circle-info"></i> Detail Fasilitas</h3>
+          <div class="feature-info-card" id="featureInfoCard"></div>
         </div>
-
         <!-- About Section -->
         <div class="sidebar-section">
           <h3 class="section-title"><i class="fa-solid fa-map-location-dot"></i> Tentang Peta</h3>
@@ -254,7 +194,6 @@
             </ul>
           </div>
         </div>
-
         <!-- Map Controls -->
         <div class="sidebar-section">
           <h3 class="section-title"><i class="fa-solid fa-sliders"></i> Kontrol Peta</h3>
@@ -270,14 +209,11 @@
             </button>
           </div>
         </div>
-
       </div>
     </aside>
-
     <!-- ── MAP CONTAINER ── -->
     <div class="map-container" id="mapContainer">
       <div id="map" aria-label="Interactive WebGIS map of Dharavi healthcare facilities"></div>
-
       <!-- Floating Controls -->
       <div class="floating-controls" id="floatingControls">
         <button class="fab" id="fabReset" title="Reset View" aria-label="Reset map view">
@@ -290,21 +226,52 @@
           <i class="fa-solid fa-expand"></i>
         </button>
       </div>
-
-
-
+      <!-- Legend Card -->
+      <div class="legend-card" id="legendCard">
+        <div class="legend-header">
+          <i class="fa-solid fa-circle-dot"></i>
+          <span>Legenda</span>
+          <button class="legend-toggle-btn" id="legendToggle" aria-label="Collapse legend">
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+        </div>
+        <div class="legend-body" id="legendBody">
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#20B2AA; box-shadow:0 0 8px #20B2AA66"></span>
+            <span class="legend-icon-svg hospital-svg">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="20" height="16" rx="3" fill="#20B2AA" opacity=".2"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#20B2AA"/><text x="12" y="11" text-anchor="middle" fill="white" font-size="8" font-weight="bold">H</text></svg>
+            </span>
+            <span>Rumah Sakit</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#E91E8C; box-shadow:0 0 8px #E91E8C66"></span>
+            <span class="legend-icon-svg clinic-svg">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#E91E8C"/><text x="12" y="11" text-anchor="middle" fill="white" font-size="7" font-weight="bold">K</text></svg>
+            </span>
+            <span>Klinik Kesehatan</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-line" style="background:linear-gradient(90deg,#FFB300,#FFC107); box-shadow:0 0 6px #FFB30066"></span>
+            <span>Jalur Ambulance</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#E53935; box-shadow:0 0 8px #E5393566; width:16px;height:16px"></span>
+            <span class="legend-icon-svg pos-svg">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#E53935"/><text x="12" y="11" text-anchor="middle" fill="white" font-size="7" font-weight="bold">P</text></svg>
+            </span>
+            <span>Pos Ambulance</span>
+          </div>
+        </div>
+      </div>
       <!-- Scale Bar hint overlay -->
       <div class="map-attribution-bar">
         <span><i class="fa-solid fa-copyright"></i> OpenStreetMap contributors</span>
         <span>HOT OSM · Dharavi · 2026</span>
       </div>
     </div>
-
   </main>
-
   <!-- Toast Notification -->
   <div class="toast-container" id="toastContainer"></div>
-
   <!-- ══════════════════ SCRIPTS ══════════════════ -->
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
