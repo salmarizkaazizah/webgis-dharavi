@@ -77,9 +77,9 @@ function initMap() {
 async function loadAllData() {
   try {
     const [hospitalData, clinicData, jalanData] = await Promise.all([
-      fetchGeoJSON('./data/data_rumah_sakit_dharavi.geojson'),
-      fetchGeoJSON('./data/data_klinik_dharavi.geojson'),
-      fetchGeoJSON('./data/jalan_dan_ambulan.geojson'),
+      fetchGeoJSON('/data/data_rumah_sakit_dharavi.geojson'),
+      fetchGeoJSON('/data/data_klinik_dharavi.geojson'),
+      fetchGeoJSON('/data/jalan_dan_ambulan.geojson'),
     ]);
 
     buildHospitalLayer(hospitalData);
